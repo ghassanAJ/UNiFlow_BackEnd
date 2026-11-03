@@ -1,0 +1,29 @@
+$kind: http-request
+name: Login admin
+method: POST
+url: '{{base_url}}/api/login'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "university_id": "{{admin_university_id}}",
+      "password": "{{admin_password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('admin login returns a bearer token', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.token_type).to.eql('Bearer');
+        pm.expect(body.token).to.be.a('string').and.not.empty;
+        pm.expect(body.user.role).to.eql('admin');
+        pm.expect(body.user.university_id).to.eql(pm.collectionVariables.get('admin_university_id'));
+        pm.expect(body.user.email).to.eql(pm.collectionVariables.get('admin_email'));
+        pm.collectionVariables.set('admin_token', body.token);
+      });

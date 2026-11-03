@@ -1,0 +1,18 @@
+$kind: http-request
+name: Logout student
+method: POST
+url: '{{base_url}}/api/logout'
+order: 16000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{student_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('logout revokes every device token', function () {
+        pm.response.to.have.status(200);
+        pm.expect(pm.response.json().message).to.eql('تم تسجيل الخروج.');
+      });

@@ -1,0 +1,20 @@
+$kind: http-request
+name: Admin area
+method: GET
+url: '{{base_url}}/api/admin'
+order: 3000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{admin_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('admin area returns the role without permissions', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.role).to.eql('admin');
+        pm.expect(body.permissions).to.be.undefined;
+      });

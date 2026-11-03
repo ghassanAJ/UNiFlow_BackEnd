@@ -1,0 +1,22 @@
+$kind: http-request
+name: List students
+method: GET
+url: '{{base_url}}/api/students'
+order: 2500
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{admin_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('admin receives every student', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.students).to.have.lengthOf(10);
+        pm.expect(body.students.every((student) => student.role === 'student')).to.be.true;
+        pm.expect(body.students[0]).to.not.have.property('password');
+        pm.expect(body.students.map((student) => student.university_id)).to.include('3001');
+      });

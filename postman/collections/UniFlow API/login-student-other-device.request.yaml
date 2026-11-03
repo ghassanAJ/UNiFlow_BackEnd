@@ -1,0 +1,26 @@
+$kind: http-request
+name: Login student other device
+method: POST
+url: '{{base_url}}/api/login'
+order: 15500
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "university_id": "{{student_university_id}}",
+      "password": "{{student_password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('second device gets its own token', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.token).to.be.a('string').and.not.empty;
+        pm.expect(body.token).to.not.eql(pm.collectionVariables.get('student_token'));
+        pm.collectionVariables.set('student_token_other', body.token);
+      });

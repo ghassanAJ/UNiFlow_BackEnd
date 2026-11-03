@@ -1,0 +1,23 @@
+$kind: http-request
+name: Login invalid
+method: POST
+url: '{{base_url}}/api/login'
+order: 14000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "university_id": "{{student_university_id}}",
+      "password": "wrong-password"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('wrong password is rejected', function () {
+        pm.response.to.have.status(422);
+        pm.expect(pm.response.json().errors.university_id[0]).to.eql('الرقم الجامعي أو كلمة المرور غير صحيحة.');
+      });

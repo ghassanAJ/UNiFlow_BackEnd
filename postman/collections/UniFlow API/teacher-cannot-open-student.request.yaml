@@ -1,0 +1,18 @@
+$kind: http-request
+name: Teacher cannot open student
+method: GET
+url: '{{base_url}}/api/student'
+order: 9000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{teacher_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('teacher is forbidden from the student area', function () {
+        pm.response.to.have.status(403);
+        pm.expect(pm.response.json().message).to.eql('ليس لديك صلاحية للوصول إلى هذا الطلب.');
+      });

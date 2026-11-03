@@ -1,0 +1,17 @@
+$kind: http-request
+name: Me after logout
+method: GET
+url: '{{base_url}}/api/me'
+order: 17000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{student_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('a revoked token is unauthorized', function () {
+        pm.response.to.have.status(401);
+      });

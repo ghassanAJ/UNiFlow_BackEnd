@@ -1,0 +1,37 @@
+$kind: collection
+name: UniFlow API
+description: Section 2. Login, roles, token expiry, logout, and password change.
+variables:
+  - key: admin_university_id
+    value: '1001'
+  - key: teacher_university_id
+    value: '2001'
+  - key: student_university_id
+    value: '3001'
+  - key: admin_email
+    value: admin@uniflow.test
+  - key: teacher_email
+    value: teacher@uniflow.test
+  - key: student_email
+    value: student@uniflow.test
+  - key: admin_password
+    value: admin123
+  - key: teacher_password
+    value: teacher123
+  - key: student_password
+    value: student123
+  - key: admin_token
+    value: ''
+  - key: teacher_token
+    value: ''
+  - key: student_token
+    value: ''
+  - key: student_token_other
+    value: ''
+  - key: student_token_previous
+    value: ''
+scripts:
+  - type: http:beforeRequest
+    language: text/javascript
+    code: |-
+      pm.request.headers.upsert({ key: 'Accept', value: 'application/json' });

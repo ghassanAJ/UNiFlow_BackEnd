@@ -1,0 +1,26 @@
+$kind: http-request
+name: Login student
+method: POST
+url: '{{base_url}}/api/login'
+order: 10000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "university_id": "{{student_university_id}}",
+      "password": "{{student_password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('student login returns a bearer token', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.user.role).to.eql('student');
+        pm.expect(body.token).to.be.a('string').and.not.empty;
+        pm.collectionVariables.set('student_token', body.token);
+      });

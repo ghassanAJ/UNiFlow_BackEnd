@@ -1,0 +1,22 @@
+$kind: http-request
+name: List teachers
+method: GET
+url: '{{base_url}}/api/teachers'
+order: 2600
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{admin_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('admin receives every teacher', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.teachers).to.have.lengthOf(10);
+        pm.expect(body.teachers.every((teacher) => teacher.role === 'teacher')).to.be.true;
+        pm.expect(body.teachers[0]).to.not.have.property('password');
+        pm.expect(body.teachers.map((teacher) => teacher.university_id)).to.include('2001');
+      });

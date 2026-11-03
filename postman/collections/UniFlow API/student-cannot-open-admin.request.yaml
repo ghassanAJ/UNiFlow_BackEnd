@@ -1,0 +1,18 @@
+$kind: http-request
+name: Student cannot open admin
+method: GET
+url: '{{base_url}}/api/admin'
+order: 12000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{student_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('student is forbidden from the admin area', function () {
+        pm.response.to.have.status(403);
+        pm.expect(pm.response.json().message).to.eql('ليس لديك صلاحية للوصول إلى هذا الطلب.');
+      });

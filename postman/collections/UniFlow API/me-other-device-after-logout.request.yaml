@@ -1,0 +1,17 @@
+$kind: http-request
+name: Me other device after logout
+method: GET
+url: '{{base_url}}/api/me'
+order: 17500
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{student_token_other}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('logout revokes the other device token', function () {
+        pm.response.to.have.status(401);
+      });

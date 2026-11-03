@@ -1,0 +1,22 @@
+$kind: http-request
+name: Admin me
+method: GET
+url: '{{base_url}}/api/me'
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{admin_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('admin me returns the account without permissions', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.user.role).to.eql('admin');
+        pm.expect(body.user.university_id).to.eql(pm.collectionVariables.get('admin_university_id'));
+        pm.expect(body.user.email).to.eql(pm.collectionVariables.get('admin_email'));
+        pm.expect(body.permissions).to.be.undefined;
+      });

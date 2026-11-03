@@ -1,0 +1,14 @@
+$kind: http-request
+name: Me without token
+method: GET
+url: '{{base_url}}/api/me'
+order: 15000
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('a request without a token is unauthorized', function () {
+        pm.response.to.have.status(401);
+      });

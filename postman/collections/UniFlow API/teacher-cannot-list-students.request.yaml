@@ -1,0 +1,18 @@
+$kind: http-request
+name: Teacher cannot list students
+method: GET
+url: '{{base_url}}/api/students'
+order: 6500
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{teacher_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('teacher cannot list every student', function () {
+        pm.response.to.have.status(403);
+        pm.expect(pm.response.json().message).to.eql('ليس لديك صلاحية للوصول إلى هذا الطلب.');
+      });

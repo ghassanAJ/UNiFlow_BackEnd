@@ -1,0 +1,20 @@
+$kind: http-request
+name: Student area
+method: GET
+url: '{{base_url}}/api/student'
+order: 11000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{student_token}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('student area returns the role without permissions', function () {
+        pm.response.to.have.status(200);
+        const body = pm.response.json();
+        pm.expect(body.role).to.eql('student');
+        pm.expect(body.permissions).to.be.undefined;
+      });
